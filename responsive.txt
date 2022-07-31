@@ -1,0 +1,410 @@
+------------Logistic R------------
+
+from sklearn.datasets import load_iris
+iris = load_iris()
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+
+data = pd.DataFrame(iris.data,columns = iris.feature_names)
+data.head()
+data['Species'] = pd.DataFrame(iris.target)
+data.head()
+X = data.iloc[:,:-1]
+y = data.iloc[:,-1]
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size = 0.3)
+model = LogisticRegression(max_iter = 1000)
+model_fit = model.fit(X_train,y_train)
+y_pred = model.predict(X_test)
+print('Accuracy: ',accuracy_score(y_pred,y_test).round(2)*100)
+[out]:93.0
+
+-----------Naive Bayes-----------
+
+from sklearn.datasets import load_iris
+iris = load_iris()
+import pandas as pd
+data = pd.DataFrame(iris.data,columns = iris.feature_names)
+data.head()
+data['Species'] = pd.DataFrame(iris.target)
+data.head()
+X = data.iloc[:,:-1]
+y = data.iloc[:,-1]
+from sklearn.model_selection import train_test_split
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size = 0.3)
+from sklearn.naive_bayes import GaussianNB
+model = GaussianNB()
+model_fit = model.fit(X_train,y_train)
+y_pred = model.predict(X_test)
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score
+print(confusion_matrix(y_pred,y_test))
+print('Accuracy: ',accuracy_score(y_pred,y_test).round(2)*100)
+print('Accuracy: ',precision_score(y_pred,y_test,average = 'macro').round(2)*100)
+print('Accuracy: ',recall_score(y_pred,y_test,average = 'macro').round(2)*100)
+[out]:
+[[13  0  0]
+ [ 0 13  2]
+ [ 0  1 16]]
+Accuracy:  93.0
+Accuracy:  94.0
+Accuracy:  94.0
+
+--------linear reg-----------
+
+import numpy as np
+import pandas as pd
+from random import randint
+
+def reg_fun(x):
+  return 7*x-3
+x = []
+y = []
+for _ in range(5):
+  t = randint(0,20)
+  print(t,reg_fun(t))
+  x.append(t)
+  y.append(reg_fun(t) + randint(-10,10))
+
+from matplotlib import pyplot as plt
+%matplotlib inline
+
+plt.plot(x,[reg_fun(i) for i in x],color='green',label='True Distribution')
+plt.scatter(x,y,color='blue',label='Target')
+plt.legend()
+plt.show()
+
+xbar = np.mean(x)
+ybar = np.mean(y)
+d=0
+n=0
+for i in range(5):
+  d+=(x[i]-xbar)**2
+  n+=(x[i]-xbar)*(y[i]-ybar)
+  print(np.round(d,2),np.round(n,2))
+w1=n/d
+w0=ybar-w1*xbar
+
+print('xbar:',xbar,'\t','ybar:',ybar,'\t','w0:',w0,'\t','w1:',w1)
+print('n:',n,'\t','d:',d)
+
+def model(w0,w1,x):
+  return w0+w1*x
+  
+ plt.plot(x,[model(w0,w1,i) for i in x],color='red',label='Predicted')
+plt.scatter(x,y,color='blue',label='Target')
+plt.legend()
+plt.show()
+
+----------------numpy and pandas------------
+
+import numpy as np
+
+array =np.arange(20)
+print(type(array))
+print(array)
+print(array.shape)
+print(type(array.shape))
+array[3]
+
+array[3]=100
+print(array)
+
+array=np.arange(9)
+print(array)
+x=array.reshape(3,3)
+print(x)
+
+np.arange(0,10)
+
+np.arange(10,35,3)
+
+np.zeros((2,4))
+
+np.ones((3,4))
+
+np.full((2,2),4)
+
+np.eye(3,3)
+
+l = [1,2,3,4,5,6,7,8]
+a = np.array(l)
+print(a)
+print(type(a))
+
+a = a.reshape(2,4)
+print(a)
+
+a=a.T
+print(a)
+
+max = a.max()
+min = a.min()
+mean = a.mean()
+std = a.std(axis=1)
+print('Max : ', max)
+print('Min : ', min)
+print('Mean : ', mean)
+print('Std : ', std)
+
+num = []
+for i in range(0,5):
+  num.append(np.random.randint(0,2))
+num =np.array(num)
+print(num)
+print(np.unique(num))
+
+x= np.arange(1,4)
+y= np.arange(1,7,2)
+print(x)
+print(y)
+np.add(x,y)
+
+num=np.arange(1,10,dtype=float).reshape(3,3)
+print(num)
+print(np.max(num))
+print(np.max(num,axis=0))
+print(np.max(num,axis=1))
+
+num[1,2] = np.NaN
+print(num)
+np.max(num,axis=0)
+
+import pandas as pd
+
+data=pd.read_excel('test_data.xlsx')
+
+data.head()
+
+data.isnull().sum()
+
+data.dropna
+
+data.dropna(axis=1)
+
+import numpy as np
+from sklearn.impute import SimpleImputer
+im=SimpleImputer(missing_values=np.nan,strategy='mean')
+im=im.fit(data)
+imputed_data = im.transform(data)
+print(data)
+print(imputed_data)
+
+data=pd.pd.read_csv('iris.csv')
+data.head()
+
+data.columns=['sepel length', 'sepal width', 'petal length', 'petal length', 'class']
+data.head()
+
+np.unique(data['class'])
+
+mapping = {
+    'Iris-setosa':0,
+    'Iris-versicolor':1,
+    'Iris-verginica':2
+}
+data['class']=data['class'].map(mapping)
+data.head()
+
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+data['class'] = le.fit_transform(data['class'])
+data.head()
+
+----------regression--------------------
+from sklearn.datasets import load_boston
+
+boston = load_boston()
+
+print(boston.DESCR)
+
+import pandas as pd
+
+data = pd.DataFrame(boston.data,columns = boston.feature_names)
+print(boston.keys())
+
+data['MEDV'] = pd.DataFrame(boston.target)
+
+data.head()
+
+pd.DataFrame(data.corr().round(2))
+
+x = data['RM']
+y = data['MEDV']
+
+pd.DataFrame([x,y]).transpose().head()
+
+from sklearn.model_selection import train_test_split
+x_train, x_test, y_train, y_test = train_test_split(x,y,test_size = 0.3)
+print(type(x_train))
+print(type(y_train))
+
+x_train = pd.DataFrame(x_train)
+x_test = pd.DataFrame(x_test)
+
+from sklearn.linear_model import LinearRegression
+model = LinearRegression()
+model.fit(x_train,y_train)
+y_pred = model.predict(x_test)
+
+from sklearn.metrics import mean_squared_error
+from math import sqrt
+print(sqrt(mean_squared_error(y_pred,y_test)))
+
+from matplotlib import pyplot as plt
+%matplotlib inline
+
+plt.scatter(x_test,y_test,label='Actual')
+plt.plot(x_test,y_pred,color='red',label='Fit')
+plt.xlabel('RM')
+plt.ylabel('MEDV')
+plt.legend()
+plt.show()
+
+from sklearn.datasets import load_diabetes
+diabetes = load_diabetes()
+
+data = pd.DataFrame(diabetes.data,columns = diabetes.feature_names)
+data['Target'] = pd.DataFrame(diabetes.target)
+
+data.head()
+
+print(data.corr().round(2))
+
+------------Decision Tree-------------------
+from sklearn.datasets import load_iris
+
+iris = load_iris()
+print (iris)
+
+import pandas as pd
+
+data = pd.DataFrame(iris.data,columns = iris.feature_names)
+print(data)
+
+data.head()
+
+data['Species'] = pd.DataFrame(iris.target)
+print(data)
+
+data.head()
+
+X = data.iloc[:,:-1]
+y = data.iloc[:,-1]
+
+from sklearn.model_selection import train_test_split
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size = 0.3)
+
+from sklearn.tree import DecisionTreeClassifier
+
+model = DecisionTreeClassifier(criterion = "entropy",splitter = "best")
+
+model_fit = model.fit(X_train,y_train)
+y_pred = model.predict(X_test)
+
+from sklearn.metrics import accuracy_score
+print(accuracy_score(y_pred,y_test).round(2)*100)
+
+from matplotlib import pyplot as plt
+%matplotlib inline
+from sklearn.tree import plot_tree
+
+plt.figure(figsize=(25,20))
+plot_tree(model_fit,feature_names=iris.feature_names,
+class_names=iris.target_names,
+filled=True)
+plt.show()
+
+------------K-means-----------
+
+import warnings
+warnings.filterwarnings("ignore")
+
+from sklearn.datasets import load_iris
+
+iris = load_iris()
+
+import pandas as pd
+
+data = pd.DataFrame(iris.data,columns = iris.feature_names)
+
+data.head()
+
+from sklearn.cluster import KMeans
+
+model = KMeans(n_clusters = 3,init = "random",algorithm = "full")
+model.fit(data)
+
+from matplotlib import pyplot as plt
+%matplotlib inline
+
+print(model.labels_)
+
+plt.scatter(data.iloc[:,0], data.iloc[:,1], c = model.labels_, cmap = 'brg')
+plt.xlabel(iris.feature_names[0])
+
+plt.ylabel(iris.feature_names[1])
+plt.show()
+
+from sklearn.metrics.cluster import silhouette_score
+print(silhouette_score(data,model.labels_))
+
+k_range = range(2,50)
+score = []
+for k in k_range:
+model = KMeans(n_clusters = k,init = "random",algorithm = "full")
+model.fit(data)
+score.append(silhouette_score(data,model.labels_))
+
+plt.figure(figsize=(20,10))
+plt.bar(k_range,score)
+plt.xticks(k_range)
+plt.xlabel('Clusters')
+plt.ylabel('Silhouette Score')
+plt.show()
+
+----------------------knn-------------------
+from sklearn.datasets import load_iris
+
+iris = load_iris()
+
+import pandas as pd
+
+data = pd.DataFrame(iris.data,columns = iris.feature_names)
+
+data.head()
+
+data['Species'] = pd.DataFrame(iris.target)
+
+X = data.iloc[:,:-1]
+y = data.iloc[:,-1]
+
+from sklearn.model_selection import train_test_split
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size = 0.3)
+
+from sklearn.neighbors import KNeighborsClassifier
+model = KNeighborsClassifier(n_neighbors = 5)
+
+model.fit(X_train,y_train)
+y_pred = model.predict(X_test)
+
+from sklearn.metrics import accuracy_score
+
+score = []
+k_range = range(1,31)
+for k in k_range:
+  model = KNeighborsClassifier(n_neighbors = k)
+  model.fit(X_train,y_train)
+  y_pred = model.predict(X_test)
+  score.append(accuracy_score(y_pred,y_test).round(2)*100)
+  
+for k in k_range:
+  print(k,':',score[k-1])
+ 
+from matplotlib import pyplot as plt
+%matplotlib inline
+
+plt.plot(k_range,score)
+plt.xlabel('Neighbors')
+plt.ylabel('Accuracy')
+plt.show()
